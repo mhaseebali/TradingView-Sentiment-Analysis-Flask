@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <title>Trading Strategy Simulator</title>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+   <style>
+        /* Additional styles if needed */
+        body {
+            background-color: #1a1a1a; /* Dark background color */
+            color: #ffffff; /* Blue text color */
+        }
+
+        /* Navigation bar styling */
+        nav {
+            background: #333;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar {
+            background: #000;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 2rem;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            padding: 0;
+            margin: 0;
+            align-items: center;
+        }
+
+        nav ul li {
+            color: #fff;
+            padding: 0.5rem;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #0056b3;
+        }
+
+        nav ul li.logout-icon {
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Logout icon - using a Unicode symbol for demonstration purposes */
+        .logout-icon::before {
+            content: "\2716";
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .form-section {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .form-section h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="password"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .right-div {
+            display: none;
+        }
+
+        .loading {
+            display: none; /* Initially hidden */
+            font-style: italic;
+            color: white; /* Set initial text color */
+        }
+
+        #chart {
+            height: 75vh; /* Set the desired height */
+        }
+
+        .left-div {
+            width: 100%; /* Adjust the width as needed */
+            height: 20vh; /* Set the desired height */
+            padding: 10px;
+            border: 1px solid #ccc;
+            box-sizing: border-box; /* Ensure padding is included in the width */
+            overflow-y: auto; /* Add scroll if content is too much */
+        }
+
+        p {
+            margin: 2px 0; /* Reduce margin between paragraphs */
+            padding: 0; /* Ensure no padding adds extra space */
+            color: #ffffff;
+        }
+
+        h4 {
+            margin-bottom: 0.1em; /* Reduce space below h4 */
+        }
+
+        /* Remove container flex styles as they're no longer needed */
+        .container {
+            display: block;
+        }
+
+        /* Input Groups Container */
+        .input-groups {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr) auto; /* Four equal columns + one auto for the button */
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Input Group Styling */
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: #333;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .input-group.short {
+            flex: 1 1 10%; /* Shorter width for Asset name */
+        }
+
+        .input-group.date {
+            flex: 1 1 20%; /* Adjust date input width as needed */
+        }
+
+        .input-group textarea {
+            flex: 1 1 40%; /* Larger field for textarea */
+        }
+
+        .button-group {
+            grid-column: 5 / 6; /* Span the button group to the fifth column */
+            grid-row: 1 / 3; /* Span across two rows */
+        }
+
+        .input-group label,
+        .button-group label {
+            color: #fff;
+            margin-right: 1rem;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%; /* Make input fields use all available space */
+            padding: 0.5rem;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #222;
+            color: #ddd;
+        }
+
+        .button-group button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background: #4CAF50;
+            color: #fff;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .button-group button:hover {
+            background: #367c39;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .input-groups {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+
+            .button-group {
+                grid-column: 1;
+                grid-row: auto;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+        .modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: gray;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 30%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">XAi</div>
+    <ul>
+        <li><a href="#strategies">Strategies</a></li>
+        <li><a href="#reports">Reports</a></li>
+    </ul>
+    <ul>
+        <li class="logout-icon" id='logout' title="Logout"></li>
+    </ul>
+</nav>
+
+<div id="chart"></div>
+
+<div class="input-groups">
+    <div class="input-group short">
+        <label for="script_name">Asset name:</label>
+        <input type="text" id="script_name" name="script_name" placeholder="AAPL" required value="AAPL">
+    </div>
+    <div class="input-group">
+        <label for="bar-interval">Select Bar Interval:</label>
+        <select id="bar-interval" name="bar-interval" required>
+            <option value="1d" selected>1 day</option>
+        </select>
+    </div>
+   <div class="input-group">
+    <label for="strategy">Strategy:</label>
+    <select id="movingAveragePeriod">
+        <option value="2">2 Period</option>
+        <option value="3">3 Period</option>
+        <option value="5" selected>5 Period</option>
+    </select>
+</div>
+
+    
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Select Moving Average Period</h2>
+            <form id="movingAverageForm">
+                <label>
+                    <input type="radio" name="movingAverage" value="2"> 2 Period
+                </label><br>
+                <label>
+                    <input type="radio" name="movingAverage" value="3"> 3 Period
+                </label><br>
+                <label>
+                    <input type="radio" name="movingAverage" value="5" checked> 5 Period
+                </label><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Get the modal
+        const modal = document.getElementById("myModal");
+    
+        // Get the button that opens the modal
+        const btn = document.getElementById("openModal");
+    
+        // Get the <span> element that closes the modal
+        const span = document.getElementsByClassName("close")[0];
+    
+        // Get the strategy input field
+        const strategyInput = document.getElementById("strategy");
+    
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+    
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+    
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    
+        // Handle form submission
+        const form = document.getElementById("movingAverageForm");
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const selectedPeriod = form.elements["movingAverage"].value;
+            // Update strategy input field with selected period
+            strategyInput.value = `calculate ${selectedPeriod} period moving average`;
+            modal.style.display = "none"; // Close modal after submission
+        });
+    </script>
+    
+    
+    <div class="input-group">
+        <p id="loading" class="loading">Loading Data... Please Wait</p> <!-- Loading text -->
+    </div>
+    <div class="input-group date">
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date" name="start-date" required value="2022-07-06">
+    </div>
+    <div class="input-group date">
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date" name="end-date" required value="2023-07-06">
+    </div>
+    <div class="input-group">
+        <b>Results of the Current Strategy</b>
+        <p id="initialAmount" style="display: none;">Initial Amount: $0</p>
+        <p id="finalBalance" style="display: none;">Final Balance: $0</p>
+        <p id="profitLoss" style="display: none;">Profit / Loss: $0</p>
+    </div>
+    <div class="input-group">
+        <b>Results of the Buy and Hold Strategy</b>
+        <p id="bhinitialAmount" style="display: none;">Initial Amount: $0</p>
+        <p id="bhfinalBalance" style="display: none;">Final Balance: $0</p>
+        <p id="bhprofitLoss" style="display: none;">Profit / Loss: $0</p>
+    </div>
+    <div class="input-group">
+        <b>Portfolio Name</b>
+        <p id="portfolioName">: Bridgewater BerkeShire</p>
+    </div>
+    <div class="button-group">
+        <button id="showdata">Run</button>
+    </div>
+</div>
+<div class="input-groups">
+    <div id="optimize-data" class="input-group"></div>
+</div>
+
+
+<div id="sec13f-table"></div>
+
+<!-- JavaScript code to fetch and render SEC 13F data -->
+<script>
+    // Step 1: Fetch data from Flask API
+    async function fetchSEC13FData() {
+        try {
+            const response = await fetch('/sec_13f_data'); // Assumes the Flask API is hosted on the same domain
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching SEC 13F data:', error);
+            return null;
+        }
+    }
+
+    // Step 2: Render SEC 13F data in HTML
+    async function renderSEC13FData() {
+        const sec13fData = await fetchSEC13FData();
+        if (!sec13fData) {
+            // Handle error
+            return;
+        }
+
+        // Example: Render SEC 13F data in a table
+        const tableContainer = document.getElementById('sec13f-table');
+        tableContainer.innerHTML = ''; // Clear previous content
+        const table = document.createElement('table');
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Shares</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${sec13fData.map(item => `
+                    <tr>
+                        <td>${item.company}</td>
+                        <td>${item.shares}</td>
+                        <td>${item.value}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        `;
+        tableContainer.appendChild(table);
+    }
+
+    // Call the renderSEC13FData function to fetch and render SEC 13F data when the page loads
+    window.addEventListener('load', renderSEC13FData);
+</script>
+
+
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    
+    // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAP57clg-qPi2MQv4dmkJ4XrPF3on4nbM",
+    authDomain: "mast-finance.firebaseapp.com",
+    projectId: "mast-finance",
+    storageBucket: "mast-finance.appspot.com",
+    messagingSenderId: "684174758193",
+    appId: "1:684174758193:web:26c3aa34d1e5d38a88e010"
+  };
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const auth = getAuth();
+    
+    // Check auth state on page load
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            // No user is signed in, redirect to login page
+            window.location.href = 'index.html'; // Adjust the path as necessary
+        }
+    });
+    
+    logout.addEventListener('click', (e) => {
+        console.log("Logout button clicked");
+        auth.signOut();
+        signOut(auth).then(() => {
+            console.log('User Signed Out');
+            window.location.href = 'index.html'; // Redirect to index.html
+        }).catch((error) => {
+            const errorMessage = error.message;
+            alert(errorMessage);
+        });
+    });
+    
+    async function fetchStockData() {
+    // Extract input values
+    const scriptName = document.getElementById('script_name').value;
+    const interval = document.getElementById('bar-interval').value;
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+
+    // Construct JSON object with parameters
+    const params = {
+        script_name: scriptName,
+        interval: interval,
+        start_date: startDate,
+        end_date: endDate
+    };
+
+    try {
+        console.log('API Gateway invoked successfully!');
+        console.log(JSON.stringify(params));
+        const response = await fetch('https://ho8nu2yj32.execute-api.ap-south-1.amazonaws.com/dev/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: JSON.stringify(params)
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        const responseBody = JSON.parse(responseData.body); // Assuming the body is stringified JSON
+        const stockData = responseBody;
+
+        createChart(stockData);
+    } catch (error) {
+        console.error('Error invoking API Gateway:', error);
+        console.error("Failed to fetch stock data:", error);
+    }
+}
+
+function createChart(stockData) {
+    const chartContainer = document.getElementById('chart'); // Get the chart container
+    chartContainer.innerHTML = ''; // Clear any existing content
+
+    const chart = LightweightCharts.createChart(chartContainer, {
+        width: chartContainer.clientWidth,
+        height: chartContainer.clientHeight,
+        layout: {
+            background: { color: '#222' },
+            textColor: '#DDD',
+        },
+        grid: {
+            vertLines: { color: '#444' },
+            horzLines: { color: '#444' },
+        },
+    });
+
+    const data = stockData.map(item => ({
+        time: item.Date,
+        open: item.Open,
+        high: item.High,
+        low: item.Low,
+        close: item.Close,
+    }));
+
+    const mainSeries = chart.addCandlestickSeries();
+    mainSeries.setData(data);
+
+    // Fetch and add sentiment data as a curve
+    fetchSentimentData(stockData[0].script_name, stockData[0].start_date, stockData[stockData.length - 1].end_date)
+        .then(sentimentData => {
+            const sentimentSeries = chart.addLineSeries({
+                color: '#33ff57',
+                lineWidth: 2,
+                priceLineVisible: true,
+                priceLineWidth: 1,
+                priceLineColor: '#33ff57',
+            });
+
+            const sentimentCurve = sentimentData.map(item => ({
+                time: item.Date,
+                value: item.Score,
+            }));
+
+            sentimentSeries.setData(sentimentCurve);
+        })
+        .catch(error => {
+            console.error('Error fetching sentiment data:', error);
+        });
+
+    loading.style.display = 'none'; // Hide loading text when data is fetched
+}
+
+async function fetchSentimentData(scriptName, startDate, endDate) {
+    const params = {
+        script_name: scriptName,
+        start_date: startDate,
+        end_date: endDate
+    };
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/stock_data?ticker=AAPL', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return responseData.sentiment_score;
+    } catch (error) {
+        throw new Error('Failed to fetch sentiment data:', error);
+    }
+}
+
+
+
+
+
+    
+    showdata.addEventListener('click', () => {
+        loading.style.display = 'block';
+        fetchStockData();
+    });
+</script>
+<footer class="container">
+    <small>
+        <a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a>
+    </small>
+</footer>
+</body>
+</html>

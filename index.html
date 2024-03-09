@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Landing Page</title>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">	
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        
+
+        .navbar {
+            background: #000;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 2rem;
+            align-items: center;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar li a:hover {
+            text-decoration: underline;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .user-icon {
+            cursor: pointer;
+        }
+
+        .hero {
+            background-image: url('bg1.webp'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+			align-items: flex-start; /* Align items to the start (left) */
+			text-align: left; /* Align text to the left */
+			padding-left: 4rem; /* Add some padding to the left */			
+        }
+
+        .hero-text {
+			font-family: 'Roboto', sans-serif; /* Replace with the actual font used, if known */
+			font-size: 4rem; /* Adjust the size as needed to match the image */
+			font-weight: 700; /* For a bolder font-weight, similar to the image */
+			margin-bottom: 0.5rem;
+		}
+
+        .hero-subtext {
+			font-family: 'Roboto', sans-serif;
+			font-size: 1.25rem; /* Adjust the size as needed */
+			margin-bottom: 1.5rem;
+		}
+
+        .search-bar {
+            padding: 1rem;
+            width: 20%;
+            border: none;
+            border-radius: 2rem;
+            font-size: 1rem;
+        }
+
+        .stock-ticker {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stock-item {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">XAi</div>
+        <ul>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#community">Community</a></li>
+            <li><a href="#community">Markets</a></li>
+            <li><a href="#community">News</a></li>
+            <li><a href="#community">More</a></li>
+            <!-- Add more links as needed -->
+            <li><a href="login.html">Login</a></li>
+            <li id="user-info" style="display: none;"></li> <!-- Display user email here -->
+        </ul>
+        <div class="user-icon">
+			<a href="login.html" title="Login">👤</a>
+		</div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-text">#1 AI quant analysis tool</div>
+        <div class="hero-subtext">Experience the charts, tools, and trading ideas used by 50 million people globally.</div>
+        <input type="search" class="search-bar" placeholder="Search strategies here">
+        <div class="stock-ticker">
+            <div class="stock-item">BTCUSD 51,142.00 USD</div>
+            <div class="stock-item">TSLA 197.41 USD</div>
+            <div class="stock-item">AAPL 184.37 USD</div>
+        </div>
+    </div>
+
+    <script>
+        // Check if the user is logged in and update the navigation bar accordingly
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                // User is signed in
+                document.getElementById("user-info").innerText = user.email; // Display user's email
+                document.getElementById("user-info").style.display = "block"; // Show user info in navbar
+            } else {
+                // No user is signed in
+                document.getElementById("user-info").style.display = "none"; // Hide user info in navbar
+            }
+        });
+    </script>
+<script src="tv.js"></script>
+</body>
+</html>

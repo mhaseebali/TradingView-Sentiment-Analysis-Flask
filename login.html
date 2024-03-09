@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <title>Signup & Login</title>
+    <style>
+        /* Additional styles if needed */
+        body {
+            background-color: #1a1a1a; /* Dark background color */
+            color: #ffffff; /* Blue text color */
+        }
+        .navbar {
+            background: #000;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 2rem;
+            align-items: center;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar li a:hover {
+            text-decoration: underline;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .user-icon {
+            cursor: pointer;
+        }
+
+        .form-section form {
+            display: flex;
+            flex-direction: column; /* Ensures elements stack vertically */
+            gap: 1rem; /* Adjust the space between form elements */
+        }
+        .hero {
+            background-image: url('bg2.jpg'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+			align-items: flex-start; /* Align items to the start (left) */
+			text-align: left; /* Align text to the left */
+			padding-left: 4rem; /* Add some padding to the left */	
+			background-color: rgba(0, 0, 0, 0.5); /* Darken the hero background slightly */
+	
+        }
+        .login-box {
+            /* Set a specific height and width or use other layout techniques */
+            height: 200px;
+            width: 30%;
+
+            /* Set the background color */
+            background-color: #ffffff; /* This is a green color */
+
+            /* Optional: Add some padding and other styling as needed */
+            padding: 20px;
+            box-sizing: border-box;
+
+            /* Other styles for text, layout, etc., as needed */
+            color: black;
+            text-align: center;
+        }
+		input[type="email"], input[type="password"], input[type="submit"] {
+			background-color: rgba(255, 255, 255, 0.8); /* Light background with opacity */
+			border: 1px solid #fff; /* White border for the input boxes */
+			color: #000; /* Dark text for visibility */
+			padding: 10px; /* Some padding inside the input boxes */
+			margin-bottom: 10px; /* Space between input boxes */
+			box-shadow: 0px 0px 5px 0px rgba(255,255,255,0.7); /* White glow effect */
+		}
+		
+		input[type="submit"] {
+			background-color: #2A2F45; /* Dark grey with a blue hue */
+			color: #ffffff; /* White text for visibility */
+			border: 1px solid #4A4F65; /* Slightly lighter border for some depth */
+			padding: 10px 15px;
+			font-size: 1rem;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			border-radius: 5px; /* Optional: rounded corners */
+			transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+		}
+
+		input[type="submit"]:hover {
+			background-color: #3A3F55; /* Lighter grey on hover for interactive feedback */
+		}
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+	<div class="logo">XAi</div>
+	<ul>
+		<li><a href="#products">Products</a></li>
+		<li><a href="#community">Community</a></li>
+		<li><a href="#community">Markets</a></li>
+		<li><a href="#community">News</a></li>
+		<li><a href="#community">More</a></li>
+		<!-- Add more links as needed -->
+	</ul>
+</nav>
+
+<!--
+<nav class="container-fluid">
+    <ul>
+        <li><strong>Xai</strong></li>
+    </ul>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+</nav>-->
+    <div class="hero">
+            <div> <!-- Removed the 'grid' class for simplicity -->
+<!--                <input type="text" id="fullname" name="fullname" placeholder="Full Name" aria-label="Full Name" required> -->
+                		            <h2>Signup</h2>
+				<input type="email" id="email" name="email" placeholder="Email" aria-label="Email" required>
+                <input type="password" id="password" name="password" placeholder="Password" aria-label="Password" required>
+                <input type="submit" id='signUp' value="Sign Up">
+            </div>
+            <h2>Login</h2>
+            <div> <!-- Removed the 'grid' class for simplicity -->
+                <input type="email" id="login-email" name="email" placeholder="Email" aria-label="Email" required>
+                <input type="password" id="login-password" name="password" placeholder="Password" aria-label="Password" required>
+                <input type="submit" id='login' value="Login">
+<!--                <button type="submit" onclick="event.preventDefault()">Login</button>-->
+            </div>
+
+    </div>
+<!--
+<main class="container">
+    <div class="grid">
+        <section class="form-section">
+            <h2>Signup</h2>
+            <div> <! -- Removed the 'grid' class for simplicity -- >
+                <input type="email" id="email" name="email" placeholder="Email" aria-label="Email" required>
+                <input type="password" id="password" name="password" placeholder="Password" aria-label="Password" required>
+                <input type="submit" id='signUp' value="Sign Up">
+            </div>
+        </section>
+        <section class="form-section">
+            <h2>Login</h2>
+            <div> <! -- Removed the 'grid' class for simplicity -- >
+                <input type="email" id="login-email" name="email" placeholder="Email" aria-label="Email" required>
+                <input type="password" id="login-password" name="password" placeholder="Password" aria-label="Password" required>
+                <input type="submit" id='login' value="Login">
+            </div>
+        </section>
+    </div>
+</main>
+-->
+<footer class="container">
+    <small>
+        <a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a>
+    </small>
+</footer>
+</body>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+  import { getDatabase } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  
+  
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAP57clg-qPi2MQv4dmkJ4XrPF3on4nbM",
+    authDomain: "mast-finance.firebaseapp.com",
+    projectId: "mast-finance",
+    storageBucket: "mast-finance.appspot.com",
+    messagingSenderId: "684174758193",
+    appId: "1:684174758193:web:26c3aa34d1e5d38a88e010"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+  const auth = getAuth();
+  
+  signUp.addEventListener('click',(e) => {
+  
+	var email = document.getElementById('email').value;
+	var password = document.getElementById('password').value;
+	
+	createUserWithEmailAndPassword(auth, email, password)
+	  .then((userCredential) => {
+		// Signed up 
+		const user = userCredential.user;
+		alert('User Created');
+		// ...
+	  })
+	  .catch((error) => {
+		const errorCode = error.code;
+		const errorMessage = error.message;
+		// ..
+		alert(errorMessage);
+	  });
+  });
+
+  login.addEventListener('click',(e) => {
+
+	var email = document.getElementById('login-email').value;
+	var password = document.getElementById('login-password').value;
+
+	const auth = getAuth();
+	signInWithEmailAndPassword(auth, email, password)
+	  .then((userCredential) => {
+		// Signed in 
+		const user = userCredential.user;
+		// ...
+		console.log('User Signed In');
+		window.location.href = 'xai.html'; // Redirect to chart.html
+
+	  })
+	  .catch((error) => {
+		const errorCode = error.code;
+		const errorMessage = error.message;
+		alert(errorMessage);  
+	  });
+  
+
+  });
+  
+</script>
+</html>
